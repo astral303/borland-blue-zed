@@ -199,7 +199,7 @@
             "color": "#99FF99"
           },
           "constant": {
-            "color": "#FFFF55"
+            "color": "#FF55FF"
           },
           "constructor": {
             "color": "#55FFFF"
@@ -211,7 +211,7 @@
             "color": "#55FFFF"
           },
           "emphasis.strong": {
-            "color": "#FFFF55",
+            "color": "#55FFFF",
             "font_weight": 700
           },
           "enum": {
@@ -256,7 +256,7 @@
             "color": "#FFFF55"
           },
           "property": {
-            "color": "#FFFF55"
+            "color": "#55FFFF"
           },
           "punctuation": {
             "color": "#FFFF55"
@@ -308,7 +308,8 @@
             "font_weight": 700
           },
           "type": {
-            "color": "#55FFFF"
+            "color": "#55FFFF",
+            "font_weight": 700
           },
           "variable": {
             "color": "#FFFF55"
@@ -527,7 +528,7 @@
             "color": "#99FF99"
           },
           "constant": {
-            "color": "#FFFF55"
+            "color": "#FF55FF"
           },
           "constructor": {
             "color": "#55FFFF"
@@ -539,7 +540,7 @@
             "color": "#55FFFF"
           },
           "emphasis.strong": {
-            "color": "#FFFF55",
+            "color": "#55FFFF",
             "font_weight": 700
           },
           "enum": {
@@ -584,7 +585,7 @@
             "color": "#FFFF55"
           },
           "property": {
-            "color": "#FFFF55"
+            "color": "#55FFFF"
           },
           "punctuation": {
             "color": "#FFFF55"
@@ -636,7 +637,8 @@
             "font_weight": 700
           },
           "type": {
-            "color": "#55FFFF"
+            "color": "#55FFFF",
+            "font_weight": 700
           },
           "variable": {
             "color": "#FFFF55"

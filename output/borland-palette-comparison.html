@@ -1,0 +1,164 @@
+<style>
+  #borland-comparison { display: grid; gap: 14px; }
+  #borland-comparison .bb-controls { padding-right: 90px; }
+  #borland-comparison .bb-editor {
+    --bb-background: #0000AA;
+    --bb-chrome: #000080;
+    --bb-bold: #55FFFF;
+    --bb-constant: #FF55FF;
+    --bb-property: #55FFFF;
+    --bb-symbol: #FFFFFF;
+    --bb-type-weight: 700;
+    background: var(--bb-background);
+    color: #FFFF55;
+    font: 14px/1.7 "JetBrainsMono Nerd Font Mono", "Cascadia Mono", Consolas, monospace;
+    border: 1px solid #55FFFF;
+  }
+  #borland-comparison .bb-file {
+    background: var(--bb-chrome);
+    color: #D2D2FF;
+    padding: 6px 16px;
+    font: 13px/1.5 "Segoe UI", sans-serif;
+  }
+  #borland-comparison .bb-code {
+    margin: 0;
+    padding: 12px 16px 18px;
+    color: inherit;
+    background: transparent;
+    font: inherit;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    border: 0;
+    border-radius: 0;
+  }
+  #borland-comparison .bb-code code { font: inherit; color: inherit; background: transparent; padding: 0; }
+  #borland-comparison .bb-title { color: #FFFFFF; font-weight: 700; }
+  #borland-comparison .bb-strong { color: var(--bb-bold); font-weight: 700; }
+  #borland-comparison .bb-property { color: var(--bb-property); }
+  #borland-comparison .bb-constant { color: var(--bb-constant); }
+  #borland-comparison .bb-comment { color: #55FF55; }
+  #borland-comparison .bb-cyan { color: #55FFFF; }
+  #borland-comparison .bb-type { color: #55FFFF; font-weight: var(--bb-type-weight); }
+  #borland-comparison .bb-symbol { color: var(--bb-symbol); }
+  #borland-comparison .bb-number { color: #FF55FF; }
+</style>
+<div id="borland-comparison">
+  <div class="viz-controls bb-controls">
+    <label class="form-label" for="bb-palette">Syntax palette
+      <select class="form-select" id="bb-palette">
+        <option value="cyanfields" selected>Cyan fields / white symbols</option>
+        <option value="symbols">White fields / cyan symbols</option>
+        <option value="refined">White fields / white symbols</option>
+        <option value="original">Original colors</option>
+      </select>
+    </label>
+    <label class="form-label" for="bb-background">Blue variant
+      <select class="form-select" id="bb-background">
+        <option value="classic" selected>Classic · #0000AA</option>
+        <option value="electric">Electric · #0000DD</option>
+      </select>
+    </label>
+  </div>
+  <label class="form-check form-switch">
+    <input class="form-check-input" type="checkbox" id="bb-bold-types" checked>
+    <span class="form-check-label">Bold types</span>
+  </label>
+  <div class="bb-editor" aria-label="Borland Blue syntax preview">
+    <div class="bb-file">highlighting.md</div>
+    <pre class="bb-code"><code><span class="bb-title"># Next checks</span>
+
+<span class="bb-strong">**Status on 2026-11-16:**</span> one check waits, in the car.
+The board runs firmware <span class="bb-cyan">`445c64e`</span>.</code></pre>
+    <div class="bb-file">highlighting.toml</div>
+    <pre class="bb-code"><code><span class="bb-symbol">[</span><span class="bb-property">settings</span><span class="bb-symbol">]</span>
+<span class="bb-property">lockfile</span> <span class="bb-symbol">=</span> <span class="bb-constant">true</span>
+<span class="bb-property">locked</span> <span class="bb-symbol">=</span> <span class="bb-constant">false</span>
+<span class="bb-property">retries</span> <span class="bb-symbol">=</span> <span class="bb-number">3</span>
+<span class="bb-property">profile</span> <span class="bb-symbol">=</span> <span class="bb-cyan">"classic"</span></code></pre>
+    <div class="bb-file">highlighting.cpp</div>
+    <pre class="bb-code"><code><span class="bb-type">void</span> record_time<span class="bb-symbol">(</span><span class="bb-type">uint64_t</span> now_us<span class="bb-symbol">)</span>;
+
+<span class="bb-comment">// Count the records sent in this session.</span>
+<span class="bb-type">void</span> count_sent<span class="bb-symbol">() {</span>
+    <span class="bb-symbol">++</span>counters_<span class="bb-symbol">.</span><span class="bb-property">records_sent</span>;
+<span class="bb-symbol">}</span>
+
+<span class="bb-type">void</span> count_dropped<span class="bb-symbol">() {</span>
+    <span class="bb-symbol">++</span>counters_<span class="bb-symbol">.</span><span class="bb-property">records_dropped</span>;
+<span class="bb-symbol">}</span></code></pre>
+  </div>
+  <output class="text-small text-muted" id="bb-status" aria-live="polite">Color mockup · Cyan fields / white symbols · Bold types · Classic</output>
+</div>
+<script>
+(() => {
+  const root = document.getElementById('borland-comparison');
+  const editor = root.querySelector('.bb-editor');
+  const palette = root.querySelector('#bb-palette');
+  const background = root.querySelector('#bb-background');
+  const boldTypes = root.querySelector('#bb-bold-types');
+  const status = root.querySelector('#bb-status');
+  const state = { palette: 'cyanfields', background: 'classic', bold: '#55FFFF', boldTypes: true };
+
+  function restore(saved) {
+    if (!saved) return;
+    if (['symbols', 'cyanfields', 'refined', 'original'].includes(saved.palette)) state.palette = saved.palette;
+    if (['classic', 'electric'].includes(saved.background)) state.background = saved.background;
+    if (['#55FFFF', '#FFFFFF'].includes(saved.bold)) state.bold = saved.bold;
+    if (typeof saved.boldTypes === 'boolean') state.boldTypes = saved.boldTypes;
+  }
+
+  function render() {
+    const refined = state.palette !== 'original';
+    const electric = state.background === 'electric';
+    editor.style.setProperty('--bb-background', electric ? '#0000DD' : '#0000AA');
+    editor.style.setProperty('--bb-chrome', electric ? '#00009B' : '#000080');
+    editor.style.setProperty('--bb-bold', refined ? state.bold : '#FFFF55');
+    editor.style.setProperty('--bb-constant', refined ? '#FF55FF' : '#FFFF55');
+    editor.style.setProperty('--bb-property', state.palette === 'cyanfields' ? '#55FFFF' : refined ? '#FFFFFF' : '#FFFF55');
+    editor.style.setProperty('--bb-symbol', state.palette === 'symbols' ? '#55FFFF' : '#FFFFFF');
+    editor.style.setProperty('--bb-type-weight', state.boldTypes ? '700' : '400');
+    palette.value = state.palette;
+    background.value = state.background;
+    boldTypes.checked = state.boldTypes;
+    const customized = refined && state.bold !== '#55FFFF';
+    const paletteLabel = customized ? 'Exploration' : palette.selectedOptions[0].textContent;
+    status.textContent = `Color mockup · ${paletteLabel} · ${state.boldTypes ? 'Bold types' : 'Normal types'} · ${electric ? 'Electric' : 'Classic'}`;
+  }
+
+  function save() {
+    if (window.openai?.setWidgetState) {
+      window.openai.setWidgetState({ modelContent: { ...state }, privateContent: null }).catch(() => {});
+    }
+  }
+
+  palette.addEventListener('change', () => {
+    state.palette = palette.value;
+    render();
+    save();
+  });
+  background.addEventListener('change', () => {
+    state.background = background.value;
+    render();
+    save();
+  });
+  boldTypes.addEventListener('change', () => {
+    state.boldTypes = boldTypes.checked;
+    render();
+    save();
+  });
+  window.addEventListener('openai:set_globals', event => {
+    restore(event.detail?.globals?.widgetState?.modelContent);
+    render();
+  });
+  restore(window.openai?.widgetState?.modelContent);
+  render();
+
+  if (globalThis.Tweak) {
+    const tweak = new Tweak({ container: editor, onChange: () => { render(); save(); } });
+    tweak.addSelect(state, 'bold', {
+      label: 'Bold text in refined palette',
+      options: [{ label: 'Cyan', value: '#55FFFF' }, { label: 'White', value: '#FFFFFF' }]
+    });
+  }
+})();
+</script>

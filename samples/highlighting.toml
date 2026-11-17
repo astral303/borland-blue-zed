@@ -1,0 +1,6 @@
+# Compare cyan keys, white symbols, and magenta literals.
+[settings]
+lockfile = true
+locked = false
+retries = 3
+profile = "classic"
